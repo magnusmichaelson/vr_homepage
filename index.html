@@ -1,179 +1,19 @@
-<!-- Licensed under a BSD license. See license.html for license -->
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>magnus.games</title>
-    <style>
-    html, body {
-        height: 100%;
-        margin: 0;
-    }
-    #top {
-        width: 100%;
-        height: 10%;
-        display: block;
-    }
-    #canvas {
-        width: 100%;
-        height: 90%;
-        display: block;
-    }
-    </style>
+    <title>Object3D WebXR</title>
+    <meta charset="UTF-8" />
   </head>
-  <body>
-    <div id="top"></div>
-    <canvas id="canvas"></canvas>
-  </body>
-<script type="module">
-
-  function buildRacks() {
-    var countRow;
-    var countRack;
-    var edges;
-    var geometry;
-    var line;
-    var material;
-    var mesh;
-    var height;
-    for (countRow = 0; countRow < 10; countRow++) {
-        for (countRack = 0; countRack < 10; countRack++) {
-	    height = (2 + countRow + countRack) / 10;
-            // @ts-ignore
-            geometry = new THREE.BoxGeometry(0.9, 0.9, height);
-            // @ts-ignore
-            //material = new THREE.MeshStandardMaterial();
-            material = new THREE.MeshPhongMaterial();
-            material.color.setRGB(1, 1, 1);
-            // @ts-ignore
-            mesh = new THREE.Mesh(geometry, material);
-            mesh.position.x = -4  + countRack * 2;
-            mesh.position.y = -4 + (countRow * 1);
-            mesh.position.z = (height / 2) - 4;
-            mesh.name = "rack_" + countRow + "+" + countRack;
-            scene.add(mesh);
-            // @ts-ignore
-            edges = new THREE.EdgesGeometry(geometry);
-            // @ts-ignore
-            material = new THREE.LineBasicMaterial();
-            material.color.setRGB(0, 0, 0);
-            // @ts-ignore
-            line = new THREE.LineSegments(edges, material);
-            mesh.add(line);
+    <style>
+      body {
+          margin: 0;
         }
-    }
-}
-
-function makeInstance(geometry, color, x) {
-  const material = new THREE.MeshPhongMaterial({color});
-  const cube = new THREE.Mesh(geometry, material);
-  scene.add(cube);
-  cube.position.x = 0;
-  cube.position.y = x;
-  cube.position.z = -0.2;
-  return cube;
-}
-
-
-import * as THREE from './three.module.js';
-import {VRButton} from './VRButton.js';
-  const canvas = document.querySelector('#canvas');
-  const renderer = new THREE.WebGLRenderer({antialias: true, canvas});
-  renderer.xr.enabled = true;
-  renderer.setClearColor(0xf0f3f4);
-  document.body.appendChild(VRButton.createButton(renderer));
-
-  document.getElementById("top").innerHTML = "test";
-  const fov = 75;
-  const aspect = 2;  // the canvas default
-  const near = 0.1;
-  const far = 50;
-  const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-  camera.rotation.x = Math.PI / 2;
-  //camera.eulerOrder = 'ZXY';
-  camera.rotation.order = 'ZXY';
-  camera.position.set(0, 0, 0);
-  renderer.xr.addEventListener( 'sessionstart', function ( event ) {
-    spin = true;
-    xrCamera = renderer.xr.getCamera();
-    camera.add(xrCamera);
-  });
-
-  const scene = new THREE.Scene();
-  /*
-  const loader = new THREE.CubeTextureLoader();
-  const texture = loader.load([
-    'grid-1024.png',
-    'grid-1024.png',
-    'grid-1024.png',
-    'grid-1024.png',
-    'grid-1024.png',
-    'grid-1024.png',
-  ]);
-  scene.background = texture;
-  */
-  // light
-  const color = 0xFFFFFF;
-  const intensity = 2;
-  const light = new THREE.DirectionalLight(color, intensity);
-  light.position.set(0, 2, 4);
-  scene.add(light);
-  // basic box
-  const boxWidth = 0.1;
-  const boxHeight = 0.1;
-  const boxDepth = 0.1;
-  const geometry = new THREE.BoxGeometry(boxWidth, boxHeight, boxDepth);
-
-  const cubes = [
-    makeInstance(geometry, 0x44aa88, -0.9),
-    makeInstance(geometry, 0x8844aa, -0.6),
-    makeInstance(geometry, 0xaa8844,  -0.3),
-    makeInstance(geometry, 0xaa8844,  0.0),
-    makeInstance(geometry, 0xaa8844,  0.3),
-    makeInstance(geometry, 0xaa8844,  0.6),
-    makeInstance(geometry, 0xaa8844,  0.9)
-  ];
-
-  function resizeRendererToDisplaySize(renderer) {
-    const canvas = renderer.domElement;
-    const width = canvas.clientWidth;
-    const height = canvas.clientHeight;
-    const needResize = canvas.width !== width || canvas.height !== height;
-    if (needResize) {
-      renderer.setSize(width, height, false);
-    }
-    return needResize;
-  }
-
-  function render(time) {
-  var rotate = 0;
-    time *= 0.001;
-    if (resizeRendererToDisplaySize(renderer)) {
-      const canvas = renderer.domElement;
-      camera.aspect = canvas.clientWidth / canvas.clientHeight;
-      camera.updateProjectionMatrix();
-    }
-    if (spin){
-    cubes.forEach((cube, ndx) => {
-      const speed = 1 + ndx * .1;
-      const rot = time * speed;
-      cube.rotation.y = rot;
-      //cube.rotation.y = rot;
-    });
-    }
-    rotate = (time / -10) % (Math.PI / 2);
-    camera.rotation.z = rotate;
-
-
-    renderer.render(scene, camera);
-  }
-
-  var xrCamera;
-  var viewerPose;
-  var spin = false;
-  buildRacks()
-  renderer.setAnimationLoop(render);
-</script>
+      
+      canvas {
+        display: block;
+      }
+    </style>
+  <body>
+    <script src="./index.js" type="module"></script>
+  </body>
 </html>
-
