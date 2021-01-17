@@ -2,7 +2,7 @@ import * as THREE from "./three.module.js";
 import { VRButton } from "./VRButton.js";
 import { XRControllerModelFactory } from "./XRControllerModelFactory.js";
 import { XRHandModelFactory } from "./XRHandModelFactory.js";
-import "./index.css";
+//import "./index.css";
 
 // Boilerplate
 const renderer = new THREE.WebGLRenderer({
