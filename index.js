@@ -91,7 +91,7 @@ window.addEventListener("resize", handleResize);
 
 renderer.setAnimationLoop(() => {
   // Update player
-  player.rotation.y += 0.01;
+  player.rotation.y += 0.001;
 
   renderer.render(scene, camera);
 });
