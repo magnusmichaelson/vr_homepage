@@ -97,6 +97,7 @@ import {VRButton} from './VRButton.js';
   renderer.xr.addEventListener( 'sessionstart', function ( event ) {
     spin = true;
     xrCamera = renderer.xr.getCamera();
+    camera.add(xrCamera);
   });
 
   const scene = new THREE.Scene();
@@ -163,10 +164,6 @@ import {VRButton} from './VRButton.js';
     }
     rotate = (time / -10) % (Math.PI / 2);
     camera.rotation.z = rotate;
-
-    if (xrCamera){
-      xrCamera.rotation.x = Math.PI / 2;
-    }
 
 
     renderer.render(scene, camera);
