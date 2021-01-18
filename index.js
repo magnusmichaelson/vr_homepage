@@ -243,7 +243,7 @@ renderer.setAnimationLoop(() => {
     });
     */
   //} else {
-    //player.position.y = (performance.now() % 20000) / 20000 * 20;
+    player.position.y = (performance.now() % 20000) / 20000 * 20;
 
 
 
