@@ -53,11 +53,11 @@ function feedback(){
     material = new THREE.MeshStandardMaterial();
     material.color.setRGB(1,0,0);
     mesh = new THREE.Mesh(geometry, material);
-    mesh.position.x = 0;
-    mesh.position.y = 1.8;
-    mesh.position.z = 0.2;
+    mesh.position.x = -0.2;
+    mesh.position.y = 0.1;
+    mesh.position.z = -1;
     mesh.name = "feedback";
-    player.add(mesh);
+    camera.add(mesh);
     //edges = new THREE.EdgesGeometry(geometry);
     //material = new THREE.LineBasicMaterial();
     //material.color.setRGB(0.2, 0.2, 0.2);
@@ -188,7 +188,7 @@ hand2.add(handModelFactory.createHandModel(hand2));
 
 // Add player objects
 const playerObjects = [
-  camera,
+    camera,
   controller1,
   controller2,
   controllerGrip1,
@@ -196,7 +196,6 @@ const playerObjects = [
   hand1,
   hand2
 ];
-
 playerObjects.forEach((object) => player.add(object));
 
 // add feedback block
@@ -238,6 +237,16 @@ renderer.setAnimationLoop(() => {
     */
   //} else {
     player.position.y = (performance.now() % 20000) / 20000 * 20;
+
+    // change color of block
+    if (performance.now() % 2000 > 1000){
+        scene.getObjectByName("feedback").material.color.setRGB(1,0,0);
+    }
+    else {
+        scene.getObjectByName("feedback").material.color.setRGB(0,1,0);
+    }
+
+
   //}
   
 });
