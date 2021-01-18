@@ -31,7 +31,7 @@ function buildRacks() {
             mesh.position.x = countRack + 0.5;
             mesh.position.y = (countRow * 2) + 0.5;
             mesh.position.z = height / 2;
-            mesh.name = "rack_" + countRow + "+" + countRack;
+            mesh.name = "rack_" + countRow + "_" + countRack;
             scene.add(mesh);
             // @ts-ignore
             edges = new THREE.EdgesGeometry(geometry);
@@ -43,26 +43,6 @@ function buildRacks() {
             mesh.add(line);
         }
     }
-}
-
-function feedback(){
-    var geometry;
-    var mesh;
-    var material;
-    geometry = new THREE.BoxGeometry(0.1, 0.1, 0.1);
-    material = new THREE.MeshStandardMaterial();
-    material.color.setRGB(1,0,0);
-    mesh = new THREE.Mesh(geometry, material);
-    mesh.position.x = -0.2;
-    mesh.position.y = 0.1;
-    mesh.position.z = -1;
-    mesh.name = "feedback";
-    camera.add(mesh);
-    //edges = new THREE.EdgesGeometry(geometry);
-    //material = new THREE.LineBasicMaterial();
-    //material.color.setRGB(0.2, 0.2, 0.2);
-    //line = new THREE.LineSegments(edges, material);
-    //mesh.add(line);
 }
 
 /**
@@ -157,85 +137,6 @@ player.position.y = -3;
 player.position.z = 0.8;
 scene.add(player);
 
-// add cube
-
-const loader = new THREE.FontLoader();
-loader.load( 'helvetiker_regular.typeface.json', function ( font ) {
-
-    const color = 0x006699;
-
-    const matDark = new THREE.LineBasicMaterial( {
-        color: color,
-        side: THREE.DoubleSide
-    } );
-
-    const matLite = new THREE.MeshBasicMaterial( {
-        color: color,
-        transparent: true,
-        opacity: 0.4,
-        side: THREE.DoubleSide
-    } );
-
-    const message = "   Three.js\nSimple text.";
-
-    const shapes = font.generateShapes( message, 0.1 );
-
-    const geometry = new THREE.ShapeBufferGeometry( shapes );
-
-    geometry.computeBoundingBox();
-
-    const xMid = - 0.5 * ( geometry.boundingBox.max.x - geometry.boundingBox.min.x );
-
-    geometry.translate( xMid, -0.1, 0 );
-
-    // make shape ( N.B. edge view not visible )
-
-    const text = new THREE.Mesh( geometry, matLite );
-    text.position.z = - 1;
-    camera.add( text );
-    // make line shape ( N.B. edge view remains visible )
-/*
-    const holeShapes = [];
-
-    for ( let i = 0; i < shapes.length; i ++ ) {
-
-        const shape = shapes[ i ];
-
-        if ( shape.holes && shape.holes.length > 0 ) {
-
-            for ( let j = 0; j < shape.holes.length; j ++ ) {
-
-                const hole = shape.holes[ j ];
-                holeShapes.push( hole );
-
-            }
-
-        }
-
-    }
-
-    shapes.push.apply( shapes, holeShapes );
-
-    const lineText = new THREE.Object3D();
-
-    for ( let i = 0; i < shapes.length; i ++ ) {
-
-        const shape = shapes[ i ];
-
-        const points = shape.getPoints();
-        const geometry = new THREE.BufferGeometry().setFromPoints( points );
-
-        geometry.translate( xMid, 0, 0 );
-
-        const lineMesh = new THREE.Line( geometry, matDark );
-        lineText.add( lineMesh );
-
-    }
-
-    scene.add( lineText );
-    */
-} );
-
 // Add controllers
 const controller1 = renderer.xr.getController(0);
 const controller2 = renderer.xr.getController(1);
@@ -265,18 +166,37 @@ hand2.add(handModelFactory.createHandModel(hand2));
 // Add player objects
 const playerObjects = [
     camera,
-  controller1,
-  controller2,
-  controllerGrip1,
-  controllerGrip2,
-  hand1,
-  hand2
+    controller1,
+    controller2,
+    controllerGrip1,
+    controllerGrip2,
+    hand1,
+    hand2
 ];
 playerObjects.forEach((object) => player.add(object));
 
-// add feedback block
-feedback();
 
+
+// add text
+const loader = new THREE.FontLoader();
+loader.load( 'helvetiker_regular.typeface.json', function ( font ) {
+    const color = 0x006699;
+    const matLite = new THREE.MeshBasicMaterial( {
+        color: 0x000000,
+        transparent: true,
+        opacity: 0.8,
+        side: THREE.DoubleSide
+    } );
+    const message = "HUD Text";
+    const shapes = font.generateShapes( message, 0.01 );
+    const geometry = new THREE.ShapeBufferGeometry( shapes );
+    geometry.computeBoundingBox();
+    const xMid = - 0.5 * ( geometry.boundingBox.max.x - geometry.boundingBox.min.x );
+    geometry.translate( xMid, -0.1, 0 );
+    const text = new THREE.Mesh( geometry, matLite );
+    text.position.z = - 0.5;
+    camera.add( text );
+} );
 
 // Handle window resize
 const handleResize = () => {
@@ -291,13 +211,21 @@ renderer.setAnimationLoop(() => {
   // Update player
   renderer.render(scene, camera);
   const session = renderer.xr.getSession();
-  scene.getObjectByName("feedback").material.color.setRGB(1,0,0);
   if (session){
-    scene.getObjectByName("feedback").material.color.setRGB(0,1,0);
       if ("gamepad" in session){
-        scene.getObjectByName("feedback").material.color.setRGB(0,0,1);
       }
   }
+
+
+
+
+  // modify rack color
+    if (performance.now() % 2000 > 1000){
+        scene.getObjectByName("rack_0_0").material.color.setRGB(0,0,1);
+    }
+    else {
+        scene.getObjectByName("rack_0_0").material.color.setRGB(0,1,0);
+    }
 /*
 
     const session = renderer.xr.getSession();
