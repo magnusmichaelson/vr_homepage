@@ -159,6 +159,82 @@ scene.add(player);
 
 // add cube
 
+const loader = new THREE.FontLoader();
+loader.load( 'helvetiker_regular.typeface.json', function ( font ) {
+
+    const color = 0x006699;
+
+    const matDark = new THREE.LineBasicMaterial( {
+        color: color,
+        side: THREE.DoubleSide
+    } );
+
+    const matLite = new THREE.MeshBasicMaterial( {
+        color: color,
+        transparent: true,
+        opacity: 0.4,
+        side: THREE.DoubleSide
+    } );
+
+    const message = "   Three.js\nSimple text.";
+
+    const shapes = font.generateShapes( message, 0.1 );
+
+    const geometry = new THREE.ShapeBufferGeometry( shapes );
+
+    geometry.computeBoundingBox();
+
+    const xMid = - 0.5 * ( geometry.boundingBox.max.x - geometry.boundingBox.min.x );
+
+    geometry.translate( xMid, -0.1, 0 );
+
+    // make shape ( N.B. edge view not visible )
+
+    const text = new THREE.Mesh( geometry, matLite );
+    text.position.z = - 1;
+    camera.add( text );
+    // make line shape ( N.B. edge view remains visible )
+/*
+    const holeShapes = [];
+
+    for ( let i = 0; i < shapes.length; i ++ ) {
+
+        const shape = shapes[ i ];
+
+        if ( shape.holes && shape.holes.length > 0 ) {
+
+            for ( let j = 0; j < shape.holes.length; j ++ ) {
+
+                const hole = shape.holes[ j ];
+                holeShapes.push( hole );
+
+            }
+
+        }
+
+    }
+
+    shapes.push.apply( shapes, holeShapes );
+
+    const lineText = new THREE.Object3D();
+
+    for ( let i = 0; i < shapes.length; i ++ ) {
+
+        const shape = shapes[ i ];
+
+        const points = shape.getPoints();
+        const geometry = new THREE.BufferGeometry().setFromPoints( points );
+
+        geometry.translate( xMid, 0, 0 );
+
+        const lineMesh = new THREE.Line( geometry, matDark );
+        lineText.add( lineMesh );
+
+    }
+
+    scene.add( lineText );
+    */
+} );
 
 // Add controllers
 const controller1 = renderer.xr.getController(0);
@@ -215,13 +291,16 @@ renderer.setAnimationLoop(() => {
   // Update player
   renderer.render(scene, camera);
   const session = renderer.xr.getSession();
+  scene.getObjectByName("feedback").material.color.setRGB(1,0,0);
   if (session){
-      if (session.hasOwnProperty("gamepad")){
-
+    scene.getObjectByName("feedback").material.color.setRGB(0,1,0);
+      if ("gamepad" in session){
+        scene.getObjectByName("feedback").material.color.setRGB(0,0,1);
       }
-
   }
 /*
+
+    const session = renderer.xr.getSession();
     const handedness = session.inputSources.find(source => source.handedness);
     const axes = source.gamepad.axes.slice(0);
     
@@ -236,15 +315,8 @@ renderer.setAnimationLoop(() => {
     });
     */
   //} else {
-    player.position.y = (performance.now() % 20000) / 20000 * 20;
+    //player.position.y = (performance.now() % 20000) / 20000 * 20;
 
-    // change color of block
-    if (performance.now() % 2000 > 1000){
-        scene.getObjectByName("feedback").material.color.setRGB(1,0,0);
-    }
-    else {
-        scene.getObjectByName("feedback").material.color.setRGB(0,1,0);
-    }
 
 
   //}
